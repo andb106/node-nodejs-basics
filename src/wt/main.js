@@ -13,7 +13,7 @@ const performCalculations = async () => {
         return new Promise((resolve, reject) => {
         const worker = new Worker(pathToFile, { workerData: data });
         worker.on('message', resolve);
-        worker.on('error', reject);
+        worker.on('error', () => reject({status: 'error', data: null}));
         }
     )}
 
@@ -24,7 +24,7 @@ const performCalculations = async () => {
 
     try {
         const res = await Promise.allSettled(workersArray);
-        console.log(res.map((item) => item.value));
+        console.log(res.map((item) => item.value || item.reason));
     } catch (error) {
         console.log('error from Promise.allSettled', error)
     }
